@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <title>test2</title>
+    <style type="text/css">
+    #cvs{
+        width: 600px;
+        height: 350px;
+        border: 1px solid red;
+    }
+</style>
+</head>
+<body>
+    <canvas id="cvs"></canvas>
+</body>
+<script type="text/javascript" src="loadImage.js"></script>
+<script type="text/javascript">
+    var cvs = document.getElementById('cvs');
+    var ctx =cvs.getContext('2d');
+
+    function extend(o1, o2) {
+        for(key in o2) {
+            if (o2.hasOwnProperty(key)) {
+                o1[key] = o2[key];
+            }
+        }
+    }
+
+    /**
+        * constructor { Bird } 鸟构造函数
+        * param { ctx: Context } 绘图环境
+        * param { img: Image } 鸟图
+        * param { widthFrame: number } 一排的帧数
+        * param { heightFrame: number } 一列的帧数
+        * param { x: number } 鸟的起始x轴坐标
+        * param { y: number } 鸟的起始y轴坐标
+        */
+        function Bird(ctx, img, widthFrame, heightFrame, x, y) {
+            this.ctx = ctx;
+            this.img = img;
+            this.widthFrame = widthFrame;
+            this.heightFrame = heightFrame;
+            this.x = x;
+            this.y = y;
+            //小鸟的宽高
+            this.width = this.img.width / this.widthFrame;
+            this.height = this.img.height / this.heightFrame;
+             // 当前小鸟渲染的帧数
+             this.currentFrame = 0;
+            //下降速度
+            this.speed = 2;
+            //加速度
+            this.speedPlus = 0.1;
+            //绑定事件
+            this.bindEvent();
+        }
+        Bird.prototype = {
+            constructor : Bird,
+            draw : function () {
+             // 当下落速度为1的时候，旋转10度
+             var baseRadian = Math.PI / 180 * 10;
+             var maxRadian = Math.PI / 180 * 45;
+
+                // 根据速度计算旋转的弧度
+                var rotateRadian = baseRadian*this.speed;
+                // 限制最大旋转角度为45度
+                rotateRadian =rotateRadian >= maxRadian ? maxRadian : rotateRadian;
+
+                this.ctx.save();
+
+                /*
+                * 1、平移到小鸟的中心点
+                * 2、然后根据下落的速度旋转坐标系
+                * 3、绘制小鸟，但是绘制的x和y坐标变为负的宽高一半。
+                * */
+
+                this.ctx.translate( this.x + this.width / 2, this.y + this.height / 2 );
+                this.ctx.rotate( rotateRadian );
+                this.ctx.drawImage( this.img,
+                    this.width * this.currentFrame, 0, this.width, this.height,
+                    -this.width / 2, -this.height / 2, this.width, this.height );
+
+                this.ctx.restore();
+            },
+            update : function() {
+                // 绘制下一帧
+                this.currentFrame = ++this.currentFrame >= this.widthFrame? 0 : this.currentFrame;
+                // 让小鸟不断下落
+                this.y += this.speed;
+                // 刷新下落数度
+                this.speed += this.speedPlus;
+            },
+            bindEvent : function () {
+                var self = this;
+                this.ctx.canvas.addEventListener( 'click', function() {
+                    self.speed = -3;
+                } );
+            }
+        }
+
+    //天空构造器
+    function Sky(ctx, img, speed) {
+        this.ctx = ctx;
+        this.img = img;
+        this.width = this.img.width;
+        this.height = this.img.height;
+        this.speed = speed || 2;
+
+        Sky.len++;
+        this.x = this.width*(Sky.len - 1);
+        this.y = 0;
+    }
+    // 背景实例的个数
+    Sky.len = 0;
+    Sky.prototype = {
+        constructor : Sky,
+        draw : function() {
+            this.ctx.drawImage(this.img, this.x, this.y);
+        },
+        update : function () {
+            this.x -= this.speed;
+            if (this.x <= -this.width) {
+                this.x += this.width*Sky.len;
+            }
+        }
+    }
+
+    //大地
+    function Land(ctx, img, speed) {
+        this.ctx = ctx;
+        this.img = img;
+        this.width = this.img.width;
+        this.height = this.img.height;
+        this.speed = speed || 2;
+
+        Land.len++;
+        this.x = this.width*(Land.len - 1);
+        this.y = this.ctx.canvas.height - this.img.height;
+    }
+    // 背景实例的个数
+    Land.len = 0;
+    Land.prototype = {
+        constructor : Land,
+        draw : function() {
+            this.ctx.drawImage(this.img, this.x, this.y);
+        },
+        update : function () {
+            this.x -= this.speed;
+            this.x += this.x <= -this.img.width? this.img.width * Land.len: 0;
+        }
+    }
+
+    loadImage({
+        bird: './img/bird.png',
+        land: './img/land.png',
+        pipeDown: './img/pipeDown.png',
+        pipeUp: './img/pipeUp.png',
+        sky: './img/sky.png'
+    },function(imgObj){
+        console.log(imgObj);
+        // 根据背景的大小设置画布的大小
+        cvs.width = imgObj.sky.width;
+        cvs.height = imgObj.sky.height;
+
+        // 为了实现背景无限轮播，所以需要两块背景
+        var sky = new Sky( ctx, imgObj.sky, 3 );
+        var sky2 = new Sky( ctx, imgObj.sky, 3 );
+
+        var land = new Land( ctx, imgObj.land, 3 );
+        var land2 = new Land( ctx, imgObj.land, 3 );
+        var land3 = new Land( ctx, imgObj.land, 3 );
+        var land4 = new Land( ctx, imgObj.land, 3 );
+
+        // 创建鸟
+        var bird = new Bird( ctx, imgObj.bird, 3, 1, 20, 20,0.1 );
+
+
+        // 让背景动起来
+        var timer = setInterval(function() {
+
+                /*
+                * 每次绘制新的游戏画面时，
+                * 先判断小鸟有没有碰撞，
+                * 如果碰撞暂停定时器。
+                * */
+                var birdCoreX = bird.x + bird.width / 2;
+                var birdCoreY = bird.y + bird.height / 2;
+
+                // 如果小鸟撞向管道，或者飞出天空，或者duang~duang~duang，那么游戏结束
+                if ( ctx.isPointInPath( birdCoreX, birdCoreY )
+                    || birdCoreY < 0
+                    || birdCoreY > (ctx.canvas.height - imgObj.land.height) )
+                {
+                    clearInterval( timer );
+                    ctx.fillStyle = 'rgba( 100, 100, 100, 0.8 )';
+                    ctx.fillRect( 0, 0, ctx.canvas.width, ctx.canvas.height );
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillStyle = 'red';
+                    ctx.font = '900 40px 微软雅黑';
+                    ctx.fillText( 'GAME OVER!!!', ctx.canvas.width / 2, ctx.canvas.height / 2 );
+                    return;
+                }
+
+                sky.draw();
+                sky.update();
+
+                sky2.draw();
+                sky2.update();
+
+                land.draw();
+                land.update();
+
+                land2.draw();
+                land2.update();
+
+                land3.draw();
+                land3.update();
+
+                land4.draw();
+                land4.update();
+
+
+                bird.draw();
+                bird.update();
+
+            },30);
+
+
+
+    });
+
+
+
+</script>
+
+</html>

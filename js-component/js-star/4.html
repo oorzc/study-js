@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8" name="renderer" content="webkit" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1 , user-scalable=no">
+  <title>评分组件 </title>
+  <style type="text/css">
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    .rating {
+      width: 160px;
+      height: 32px;
+      margin: 100px auto;
+    }
+
+    .rating .rating-item {
+      list-style-type: none;
+      float: left;
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      background: url(img/star.png) no-repeat;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- 第2种实现方式 -->
+  <ul class="rating" id="rating">
+    <li class="rating-item" title="很不好"></li>
+    <li class="rating-item" title="不好"></li>
+    <li class="rating-item" title="一般"></li>
+    <li class="rating-item" title="好"></li>
+    <li class="rating-item" title="很好"></li>
+  </ul>
+
+
+  <ul class="rating" id="rating2">
+    <li class="rating-item" title="很不好"></li>
+    <li class="rating-item" title="不好"></li>
+    <li class="rating-item" title="一般"></li>
+    <li class="rating-item" title="好"></li>
+    <li class="rating-item" title="很好"></li>
+  </ul>
+
+
+
+  <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script type="text/javascript">
+    (function (w) {
+      //继承方法
+      var extend = function (subClss, superClass) {
+        var F = function () {};
+        F.prototype = superClass.prototype;
+        subClss.prototype = new F();
+        subClss.prototype.construtor = subClss;
+      }
+
+
+      /**
+       * [Light 构造函数 父类]
+       * @param {[string]} wrapper [父容器]
+       * @param {[string]} el      [description]
+       * @param {[object]} options [配置]
+       */
+      function Light(wrapper, el, options) {
+        this.$wrapper = $(wrapper),
+          this.el = el,
+          this.$el = this.$wrapper.find(el);
+        this.opts = options;
+        this.add = 1;
+        this.selctEvent = 'mouseover';
+      }
+      //初始化方法
+      Light.prototype.init = function () {
+        this.lightOn(this.opts.num)
+        //不为只读绑定事件
+        if (!this.opts.readOnly) {
+          this.bindEvent();
+        }
+      }
+      //点亮星星方法
+      Light.prototype.lightOn = function (num) {
+        var num = parseInt(num);
+        //获取星星
+        this.$el.each(function (index) {
+          if (index < num) {
+            $(this).css('background-position', '0 -32px');
+          } else {
+            $(this).css('background-position', '0 0');
+          }
+        });
+      }
+      //绑定事件 事件委托
+      Light.prototype.bindEvent = function () {
+        var self = this;
+        var itemLength = self.$el.length;
+        // 根据实例的子例判断加载哪个selctEvent
+        self.$wrapper.on(self.selctEvent, this.el, function (e) {
+          var $this = $(this);
+          var num = $(this).index() + self.add;
+          self.selectStar(e, $(this));
+          self.lightOn(num);
+          //传递当前选中第几个 和总共个数
+          // (typeof self.opts.select === 'function' )  && self.opts.select.call(this,num, itemLength);
+          // //触发事件传递参数
+          // self.$wrapper.trigger('select',[num, itemLength]);
+
+          // 绑定一下this，自定义函数中可能有用
+          self.opts.select && self.opts.select.apply(this, [num, self.$el.length])
+        });
+
+        // 点击修改
+        self.$wrapper.on('click', this.el, function (e) {
+          self.opts.num = $(this).index() + 1;
+          // (typeof self.opts.chosen === 'function' )  && self.opts.chosen.call(this,self.opts.num, itemLength);
+          // //触发事件传递参数
+          // self.$wrapper.trigger('chosen',[self.opts.num, itemLength]);
+
+          // 绑定一下this，自定义函数中可能有用
+          self.opts.chosen && self.opts.chosen.apply(this, [self.opts.num, self.$el.length])
+        });
+
+        // 离开的时候激活
+        self.$wrapper.on('mouseout', function (e) {
+          self.lightOn(self.opts.num);
+        });
+      }
+      Light.prototype.selectStar = function () {
+        throw new Error("子类必须重写此方法");
+      };
+
+      //构造函数 点亮整颗星星
+      function LightEntire(wrapper, el, options) {
+        //继承父类方法
+        Light.call(this, wrapper, el, options)
+        this.selctEvent = 'mouseover';
+      }
+      extend(LightEntire, Light);
+      //点亮星星方法
+      LightEntire.prototype.lightOn = function (num) {
+        Light.prototype.lightOn.call(this, num);
+      }
+      LightEntire.prototype.selectStar = function () {
+        this.add = 1;
+      };
+
+      //构造函数 点亮半颗星星
+      function LightHalf(wrapper, el, options) {
+        //继承父类方法
+        Light.call(this, wrapper, el, options)
+        this.selctEvent = 'mousemove';
+      }
+      extend(LightHalf, Light);
+      //点亮星星方法
+      LightHalf.prototype.lightOn = function (num) {
+        //判断是否为半颗
+        var count = parseInt(num),
+          isHalf = count !== num;
+        Light.prototype.lightOn.call(this, count);
+
+        if (isHalf) {
+          this.$el.eq(count).css('background-position', '0 -64px');
+        }
+      }
+      LightHalf.prototype.selectStar = function (e, $this) {
+        //根据鼠标的位置与元素位置进行对比，判断鼠标是否位于元素的左半边，左半边是将
+        if (e.pageX - $this.offset().left < $this.width() / 2) {
+          this.add = 0.5;
+        } else {
+          this.add = 1;
+        }
+      };
+
+
+
+      //默认参数   default是关键字，无法作为变量名
+      var defaults = {
+        num: 0, //星星点亮默认为0
+        mode: 'LightEntire', //点亮模式 默认为整颗
+        readOnly: false, //是否可点击
+        select: function () {}, //鼠标划过元素执行方法
+        chosen: function () {}, //点击元素执行方法
+      }
+
+      var mode = {
+        'LightEntire': LightEntire,
+        'LightHalf': LightHalf,
+      }
+
+      var init = function (wrapper, el, options) {
+        //参数重写 如果有传入使用传入 没有使用默认
+        options = $.extend({}, defaults, options);
+        // console.log(options)
+
+        // new LightEntire(el,options).init();//实例化
+        // new LightHalf(el,options).init();//实例化
+        if (!mode[options.mode]) {
+          options.mode = 'LightEntire'
+        }
+        new mode[options.mode](wrapper, el, options).init(); //实例化
+      }
+
+      //jquery插件
+      $.fn.extend({
+        rating: function (el, options) {
+          return this.each(function () {
+            init(this, el, options)
+          })
+        }
+      });
+
+      // return {
+      //   init: init
+      // }
+
+    })(window);
+
+
+
+    $("#rating").rating('.rating-item', {
+      num: 3,
+      // readOnly : true,
+      mode: 'LightEntire',
+      select: function (num, all) {
+        console.log(this, num + "/" + all);
+      },
+      chosen: function () {
+        //选择评分后移除事件，不再能够进行评分操作
+        // $(this).parent().off();
+      }
+    });
+
+    $("#rating2").rating('.rating-item', {
+      num: 3.5,
+      // readOnly : true,
+      mode: 'LightHalf',
+      select: function (num, all) {
+        console.log(num + "/" + all);
+        // console.log(this,num+"/"+all);
+      },
+      chosen: function () {
+        //选择评分后移除事件，不再能够进行评分操作
+        $(this).parent().off();
+      }
+    });
+  </script>
+</body>
+
+</html>

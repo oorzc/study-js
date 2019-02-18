@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8" name="renderer" content="webkit" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1 , user-scalable=no">
+    <title>datepicker</title>
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+    <link  rel="stylesheet"  href="css/style.css" />
+</head>
+<body>
+
+    <div class="ui-datepicker">
+        <div class="ui-datepicker-header">
+            <a href="javascript:;" class="datepicker-header-prev-btn">&lt;</a>
+            <a href="javascript:;" class="datepicker-header-next-btn">&gt;</a>
+            <span>2016-12</span>
+        </div>
+        <div class="ui-datepicker-body">
+            <table class="ui-datepicker-table">
+                <thead class="header">
+                    <tr>
+                        <th>日</th>
+                        <th>一</th>
+                        <th>二</th>
+                        <th>三</th>
+                        <th>四</th>
+                        <th>五</th>
+                        <th>六</th>
+                    </tr>
+                </thead>
+                <tbody class="body">
+                    <tr>
+                        <td>30</td>
+                        <td>31</td>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td>4</td>
+                        <td>5</td>
+                    </tr>
+                    <tr>
+                        <td>30</td>
+                        <td>31</td>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td>4</td>
+                        <td>5</td>
+                    </tr>
+                    <tr>
+                        <td>30</td>
+                        <td>31</td>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td>4</td>
+                        <td>5</td>
+                    </tr>
+                    <tr>
+                        <td>30</td>
+                        <td>31</td>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td>4</td>
+                        <td>5</td>
+                    </tr>
+                    <tr>
+                        <td>30</td>
+                        <td>31</td>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td>4</td>
+                        <td>5</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
+
+
+    <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script type="text/javascript">
+
+            (function (w) {
+                var datepicker= {};
+
+                /**
+                 * [getMonthData 获取月份数据]
+                 * @param  {[string]} year
+                 * @param  {[string]} month
+                 */
+                datepicker.getMonthData = function(year, month) {
+                    //接收结果
+                    var arr = [];
+
+                    if (!year || !month) {
+                        var today = new Date();
+                        year = today.getYear();
+                        month = today.getMonth()+1;
+                    }
+
+                    //获取当月第一天
+                    var firstDay =new Date(year, month-1, 1);
+                    //获取第一周日期   getDay()返回一周中的某一天 (0 ~ 6)。
+                    var firstDayWeekDay = firstDay.getDay();
+                    //如果为周天 赋值7
+                    if (firstDayWeekDay === 0) firstDayWeekDay = 7;
+
+                    //上月最后一天
+                    var lastDayOfLastMonth = new Date(year, month-1, 0);
+                    //存储日期、 getDate() 方法可返回月份的某一天
+                    var lastDateOfLastMonth = lastDayOfLastMonth.getDate();
+
+                    //计算需要显示多少个上个月天数 第一周第几天减一
+                    var getLastMonthDayCount = firstDayWeekDay - 1;
+
+                    //当月最后一天
+                    var lastDay = new Date(year, month, 0);
+                    var lastDate = lastDay.getDate();
+
+                    for (var i = 0; i < 7*6; i++) {
+                        //每一天的日期
+                        var date = i + 1 - getLastMonthDayCount;
+                        //实际显示日期
+                        var showDate = date;
+                        var thisMonth = month;
+
+                        if (date <= 0) {
+                            //上月
+                            thisMonth = month -1;
+                            showDate = lastDateOfLastMonth + date;
+                        }else if(date > lastDate){
+                            //下月
+                            thisMonth = month +1;
+                            showDate = showDate - lastDate;
+                        }
+                        //上年12月
+                        if (thisMonth === 0) thisMonth = 12;
+                        //下一年1月
+                        if (thisMonth === 13) thisMonth = 1;
+
+                        arr.push({
+                            //当前月份
+                            month : thisMonth,
+                            date : date,
+                            showDate : showDate
+                        });
+                    }
+                    return arr;
+                }
+
+                w.datepicker = datepicker;
+            })(window)
+
+
+                console.log(datepicker.getMonthData (2017, 8))
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <script>
+    //求1-100之间所有奇数的和，要求使用continue
+    var sum = 0;
+
+    for(var i = 1; i <= 100; i++){
+        //找到所有的奇数，做累加
+        if(i % 2 == 0 ){
+            continue;
+        }else{
+            sum += i;
+        }
+    }
+    console.log(sum);
+
+    //continue是用来干什么的？
+    //跳出本次循环 继续下次循环，continue下面的代码不再执行
+
+
+
+
+    //break 是用来干什么的？
+    //break 语句可用于跳出循环。
+  // break 语句跳出循环后，会继续执行该循环之后的代码（如果有的话）：
+
+
+  for (var j=0;j<10;j++)
+  {
+    var x;
+    if (j==3)
+    {
+        break;
+    }
+    x="The number is " + j;
+    console.log(x);
+}
+
+// The number is 0
+// The number is 1
+// The number is 2
+
+
+
+
+
+</script>
+</body>
+</html>

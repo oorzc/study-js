@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8" name="renderer" content="webkit" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1 , user-scalable=no">
+  <title>练习</title>
+  <meta name="description" content="" />
+  <meta name="keywords" content="" />
+  <style type="text/css">
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    .rating {
+      width: 160px;
+      height: 32px;
+      font-size: 0;
+      margin: 100px auto;
+    }
+
+    .rating-item,
+    .rating1-item {
+      display: inline-block;
+      width: 32px;
+      height: 32px;
+      list-style-type: none;
+      background: url(img/star.png) no-repeat;
+    }
+  </style>
+</head>
+
+<body>
+
+  <ul id="rating" class="rating">
+    <li class="rating-item" title="很不好"></li>
+    <li class="rating-item" title="不好"></li>
+    <li class="rating-item" title="一般"></li>
+    <li class="rating-item" title="好"></li>
+    <li class="rating-item" title="很好"></li>
+  </ul>
+
+  <ul id="rating1" class="rating">
+    <li class="rating1-item" title="很不好"></li>
+    <li class="rating1-item" title="不好"></li>
+    <li class="rating1-item" title="一般"></li>
+    <li class="rating1-item" title="好"></li>
+    <li class="rating1-item" title="很好"></li>
+  </ul>
+
+
+  <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script type="text/javascript">
+    (function () {
+      'use strict';
+
+      function LightOne(wrapper, el, options) {
+        //检测是否传递委托对象
+        if (Object.prototype.toString.call(el) === '[object Object]') {
+          //没有委托 默认 为 .rating-item
+          this.el = '.rating-item';
+          this.opts = el;
+        } else {
+          this.el = el;
+          this.opts = options;
+        }
+        this.$wrapper = $(wrapper);
+        //默认鼠标滑过事件
+        this.mouse = 'mouseover';
+        this.$el = this.$wrapper.find(this.el);
+        this.add = 1;
+      }
+      LightOne.prototype.init = function () {
+        //点亮星星
+        this.ligthOn(this.opts.num);
+        //是否可选
+        if (!this.opts.readOnly) {
+          this.bindDom();
+        }
+      }
+      LightOne.prototype.bindDom = function () {
+        var self = this;
+        //鼠标滑过
+        self.$wrapper.on(self.mouse, self.el, function (e) {
+
+          self.ligthOn($(this).index() + 1);
+          //传递事件
+          (typeof self.opts.select === 'function') && self.opts.select.apply(this, [$(this).index() + 1, self.$el
+            .length
+          ])
+
+        });
+
+        //鼠标点击
+        self.$wrapper.on('click', self.el, function (e) {
+          self.opts.num = $(this).index() + 1;
+          //传递事件
+          (typeof self.opts.chosen === 'function') && self.opts.chosen.apply(this, [$(this).index() + 1, self.$el
+            .length
+          ])
+
+        });
+
+        //鼠标离开
+        self.$wrapper.on('mouseout', self.el, function (e) {
+          self.ligthOn(self.opts.num);
+        });
+
+      }
+      LightOne.prototype.ligthOn = function (num) {
+        this.$wrapper.find(this.el).each(function (index, val) {
+          if (index < num) {
+            $(this).css('background-position', '0 -32px');
+          } else {
+            $(this).css('background-position', '0 0');
+          }
+        });
+      }
+
+      function LightHalf(wrapper, el, options) {
+        //检测是否传递委托对象
+        if (Object.prototype.toString.call(el) === '[object Object]') {
+          //没有委托 默认 为 .rating-item
+          this.el = '.rating-item';
+          this.opts = el;
+        } else {
+          this.el = el;
+          this.opts = options;
+        }
+        this.$wrapper = $(wrapper);
+        //默认鼠标滑过事件   半颗为移动
+        this.mouse = 'mousemove';
+        this.$el = this.$wrapper.find(this.el);
+        this.add = 1;
+        //初始化执行
+        this.init();
+      }
+      LightHalf.prototype.init = function () {
+        //点亮星星
+        this.ligthOn(this.opts.num);
+        //是否可选
+        if (!this.opts.readOnly) {
+          this.bindDom();
+        }
+      }
+      LightHalf.prototype.bindDom = function () {
+        var self = this;
+
+        //鼠标滑过
+        self.$wrapper.on(self.mouse, self.el, function (e) {
+          //判断是否小于半颗
+          if (e.pageX - $(this).offset().left < $(this).width() / 2) {
+            self.add = 0.5;
+          } else {
+            self.add = 1;
+          }
+          self.ligthOn($(this).index() + self.add);
+          //传递事件
+          (typeof self.opts.select === 'function') && self.opts.select.apply(this, [$(this).index() + self.add,
+            self.$el.length
+          ])
+
+        });
+
+        //鼠标点击
+        self.$wrapper.on('click', self.el, function (e) {
+          self.opts.num = $(this).index() + self.add;
+          //传递事件
+          (typeof self.opts.chosen === 'function') && self.opts.chosen.apply(this, [$(this).index() + self.add,
+            self.$el.length
+          ])
+
+        });
+
+        //鼠标离开
+        self.$wrapper.on(self.opts.mouse, self.el, function (e) {
+          self.ligthOn(self.$wrapper, self.el, self.opts.num);
+        });
+
+      }
+      LightHalf.prototype.ligthOn = function (num) {
+        //判断 num是否为整数
+        var count = parseInt(num),
+          isHalf = count !== num;
+
+        this.$wrapper.find(this.el).each(function (index, val) {
+          if (index < count) {
+            $(this).css('background-position', '0 -32px');
+          } else {
+            $(this).css('background-position', '0 0');
+          }
+        });
+        if (isHalf) {
+          this.$el.eq(count).css('background-position', '0 -64px');
+        }
+      }
+
+      //      var init = function(wrapper, el,  num) {
+      //       var num = num;
+      //       var $wrapper = $(wrapper);
+      //       var el = el || '.rating-item';
+
+      //       ligthOn($wrapper, el, num);
+
+      //       $wrapper.on('mouseover', el, function() {
+      //           ligthOn($wrapper, el, $(this).index()+1);
+      //       }).on('click', el, function(e) {
+      //         num = $(this).index()+1;
+      //     }).on('mouseout',el, function(e) {
+      //        ligthOn($wrapper, el, num);
+      //    });
+      // }
+
+      var defaults = {
+        //星星个数默认为0
+        num: 0,
+        //默认可选
+        readOnly: false,
+        //默认点亮一个
+        mode: 'LightOne',
+        select: function () {},
+        chosen: function () {},
+      }
+
+      var mode = {
+        'LightOne': LightOne,
+        'LightHalf': LightHalf,
+      }
+
+      var init = function (wrapper, el, options) {
+        //参数重写 如果有传入使用传入 没有使用默认
+        options = $.extend({}, defaults, options);
+        // new LightEntire(el,options).init();//实例化
+        // new LightHalf(el,options).init();//实例化
+        if (!mode[options.mode]) {
+          options.mode = 'LightOne'
+        }
+        new mode[options.mode](wrapper, el, options).init(); //实例化
+      }
+
+      $.fn.extend({
+        rating: function (el, options) {
+          return this.each(function () {
+            init(this, el, options)
+          })
+        }
+      });
+
+      return {
+        init: init
+      }
+
+    })();
+
+    // rating.init('#rating', '.rating-item', {
+    //     num : 3
+    // });
+
+    $('#rating').rating({
+      num: 4,
+      // readOnly : true,
+      mode: 'LightOne',
+      select: function (num, all) {
+        console.log(num + "/" + all)
+      },
+      chosen: function (num, all) {
+        console.log(this, num + "/" + all)
+      },
+    });
+
+    $('#rating1').rating('.rating1-item', {
+      num: 2.5,
+      // readOnly : true,
+      mode: 'LightHalf',
+      select: function (num, all) {
+        console.log(num + "/" + all)
+      },
+      chosen: function (num, all) {
+        console.log(this, num + "/" + all)
+      },
+    });
+  </script>
+</body>
+
+</html>

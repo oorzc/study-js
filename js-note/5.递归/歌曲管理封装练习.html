@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style type="text/css">
+    .container {
+        margin: 0 auto;
+        width: 850px;
+        border: 1px solid #dad8d8;
+
+        /*height: 100%;*/
+    }
+    .songslist-main, .songslist-header {
+        position: relative;
+        width: 100%;
+        text-align: center;
+    }
+    .songslist-header {
+        height: 30px;
+        border-bottom: 1px solid #dad8d8;
+        line-height: 30px;
+        background-color: #def;
+    }
+
+    .songslist-name {
+        position: absolute;
+        width: 40%;
+        height: 100%;
+        border-right: 1px solid #dad8d8;
+    }
+    .songslist-singer {
+        position: absolute;
+        left: 40%;
+        width: 50%;
+        height: 100%;
+        border-right: 1px solid #dad8d8;
+    }
+    .songslist-option {
+        position: absolute;
+        left: 90%;
+        width: 10%;
+        height: 100%;
+    }
+
+    .songslist-main {
+        background-color: #fff;
+        height: 100%;
+    }
+    .songslist-main .songslist-name{
+        height: 50px;
+        line-height: 50px;
+        border: 0;
+    }
+    .songslist-main .songslist-singer{
+        height: 50px;
+        line-height: 50px;
+        border: 0;
+    }
+    .songslist-single {
+        height: 50px;
+    }
+</style>
+<script>
+        // var songList = [
+        // {
+        //     songName:"情书",
+        //     singer:"张学友"
+        // },
+        // {
+        //     songName:"演员",
+        //     singer:"薛小谦"
+        // },
+        // {
+        //     songName:"李白",
+        //     singer:"李荣浩"
+        // }
+
+        // ];
+//        //增删该查
+//        songList.push({
+//            songName:"今天你要嫁给我",
+//            singer:"陶喆"
+//        });
+//
+//        console.log(songList);
+
+//        //删
+//        for (var i = 0; i < songList.length; i++) {
+//            var song = songList[i];
+//            if(song.songName == "李白"){
+//                //splice(起始索引,删几个)
+//                songList.splice(i, 1);
+//            }
+//        }
+// console.log(songList);
+
+        //改
+        //遍历歌曲列表，找到要修改的对象
+//        for (var j = 0; j < songList.length; j++) {
+//            var song = songList[j];
+//            //判断每次遍历的对象的歌名，和要找的歌名是不是一一致，如果一致，就是我们要找的对象
+//            if(song.songName == "演员"){
+//                //对找到的对象进行修改
+//                song.singer = "薛之谦";
+//            }
+//        }
+//        console.log(songList);
+
+//        //查
+// for (var k = 0; k < songList.length; k++) {
+//     var song = songList[k];
+//     if(song.songName == "情书"){
+//         console.log(song);
+//     }
+// }
+//
+//        console.log(songList);
+</script>
+<!-- 函数版 -->
+<!-- <script type="text/javascript">
+
+    var songlist = [
+    {
+        singer : '111',
+        song : 'aaaa'
+    },
+    {
+        singer : '222',
+        song : 'bbbb'
+    },
+    {
+        singer : '333',
+        song : 'cccc'
+    }
+    ]
+
+
+//增
+songlist.push({
+    singer : 'dddd',
+    song : 'eeee'
+});
+function addSong(singer,song){
+ songlist.push({
+    singer : singer,
+    song : song
+});
+}
+
+//改
+// for (var i = 0; i < songlist.length; i++) {
+//   var song = songlist[i];
+//   if (song.singer == '111') {
+//    song.singer = '滚滚滚';
+// }
+// }
+function setSong(singer,songName) {
+    var song = selectSong(songName);
+    song.singer = singer;
+}
+
+//删
+// for (var i = 0; i < songlist.length; i++) {
+//   var song = songlist[i];
+//   if (song.singer == '333') {
+//     console.log(i);
+//     songlist.splice(i,1);
+// }
+// }
+
+function delSong(songName) {
+    var song = selectSong(songName);
+    var index = songlist.indexOf(song);
+    songlist.splice(index,1);
+}
+
+//查
+// for (var i = 0; i < songlist.length; i++) {
+//     var song = songlist[i];
+//     if (song.singer == '222') {
+//         console.log(song.song);
+//     }
+// }
+
+//根据歌曲名查询
+function selectSong(songName)  {
+    for (var i = 0; i < songlist.length; i++) {
+        var song = songlist[i];
+        if (song.song == songName) {
+            return song;
+        }
+    }
+    return null;
+}
+
+addSong('ssss','11111');
+setSong('dddd','cccc');
+delSong('ccc');
+console.log(selectSong('bbbb'));
+console.log(songlist);
+</script>
+<script type="text/javascript">
+    fun songManger = {
+
+    }
+
+</script> -->
+
+<div class="container">
+    <div class="songslist-top">
+        <label for="txtAddSinger">歌手:</label><input type="text" id="txtAddSinger" />
+        <label for="txtAddSName">歌曲名:</label><input type="text" id="txtAddSName" />
+        <button id="btnAdd">添加</button>
+        <button id="btnRemove">删除</button>
+    </div>
+
+    <div class="songslist-header">
+        <div class="songslist-singer">歌手</div>
+        <div class="songslist-name">歌曲名称</div>
+        <div class="songslist-option">操作</div>
+    </div>
+
+    <div class="songslist-main" id="c">
+        <div class="songslist-single">
+            <div class="songslist-singer">歌手</div>
+            <div class="songslist-name">歌曲名称</div>
+        </div>
+
+        <div class="songslist-single">
+            <div class="songslist-name">歌曲名称</div>
+            <div class="songslist-singer">歌手</div>
+        </div>
+
+        <div class="songslist-single">
+            <div class="songslist-name">歌曲名称</div>
+            <div class="songslist-singer">歌手</div>
+        </div>
+
+        <div class="songslist-single">
+            <div class="songslist-name">歌曲名称</div>
+            <div class="songslist-singer">歌手</div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    (function(w){
+// 面向对象版
+function songManger(songs) {
+    this.songlist = songs || [];
+    this._init();
+}
+songManger.prototype = {
+           //由于是替换原型对象，所以constructor属性会丢失，所以需要手动设置
+           constructor : songManger,
+           _init : function(songlist) {
+              this.render();
+          },
+        //数据驱动，只要歌曲列表发生改变，就调用render方法，将页面上信息进行刷新渲染
+        render : function(){
+            var listDiv = document.getElementById('c');
+            var strArr = [];
+            for (var i = 0; i < this.songlist.length; i++) {
+                var song = this.songlist[i];
+                strArr.push(
+                    '<div class="songslist-single">'+
+                    '<div class="songslist-singer">'+song.song+'</div>'+
+                    '<div class="songslist-name">'+song.singer+'</div>'+
+                    '</div>'
+                    );
+            }
+            var str = strArr.join('');
+            listDiv.innerHTML = str;
+        },
+        addSong : function(singer,song){
+            var temp = {
+                singer : singer,
+                song : song
+            };
+            this.songlist.push(temp);
+            //在根据歌曲列表重新渲染页面
+            this.render();
+            return temp;
+        },
+
+        delSong : function(songName) {
+            var song = this.selectSong(songName);
+            if (!song) {
+                alert('没有找到该歌曲！');
+                return false;
+            }
+            var index = this.songlist.indexOf(song);
+            //判断这个索引是不是为-1 也就是与没有找到
+            if(index!=-1){
+                    //如果直到了，就直接将其从数组中删除
+                    this.songlist.splice(index, 1);
+                    //因为数组改变了，所以再次重新渲染
+                    this.render();
+                    return true;
+                }else{
+                    return false;
+                }
+            },
+            setSong : function(singer,songName) {
+                var song = this.selectSong(songName);
+                if (!song) {
+                    alert('没有找到该歌曲！');
+                    return false;
+                }
+                song.singer = singer;
+            //在根据歌曲列表重新渲染页面
+            this.render();
+            return song;
+        },
+        selectSong : function(songName)  {
+            for (var i = 0; i < this.songlist.length; i++) {
+                var song = this.songlist[i];
+                if (song.song == songName) {
+                    return song;
+                }
+            }
+            return null;
+        }
+    }
+
+    w.songManger = songManger;
+})(window)
+
+
+var Mp3 = new songManger(
+  [
+  {
+    singer : '111',
+    song : 'aaaa'
+},
+{
+    singer : '222',
+    song : 'bbbb'
+},
+{
+    singer : '333',
+    song : 'cccc'
+}
+]);
+
+Mp3.addSong('ssss','11111');
+Mp3.addSong('dddd','11111');
+// Mp3.setSong('ddd111d','bbbb');
+// Mp3.delSong('cccc');
+// Mp3.delSong('cccc1111');
+// console.log(Mp3.selectSong('bbbb'));
+// console.log(Mp3);
+
+
+var btnAdd = document.getElementById("btnAdd");
+var btnRemove= document.getElementById("btnRemove");
+
+var txtSName = document.getElementById("txtAddSName");
+var txtSSinger = document.getElementById("txtAddSinger");
+//点击添加按钮的事件
+btnAdd.onclick = function () {
+    var songName = txtSName.value;
+    var singer = txtSSinger.value;
+    if(songName.trim()!==""&&singer.trim()!=""){
+        Mp3.addSong(songName,singer);
+    }
+}
+//点击删除按钮的事件
+btnRemove.onclick=function () {
+    var songName = txtSName.value;
+    if(songName.trim()!==""){
+        if(Mp3.delSong(songName)){
+            alert("删除成功了");
+        }
+    }
+}
+
+</script>
+
+
+
+</head>
+<body>
+
+</body>
+</html>

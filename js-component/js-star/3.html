@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8" name="renderer" content="webkit" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1 , user-scalable=no">
+    <title>评分组件 </title>
+    <style type="text/css">
+    * {
+        margin: 0;
+        padding: 0;
+    }
+    .rating {
+        width:160px;
+        height: 32px;
+        margin: 100px auto;
+    }
+    .rating .rating-item {
+        list-style-type: none;
+        float: left;
+        width: 32px;
+        height: 32px;
+        cursor: pointer;
+        background: url(img/star.png) no-repeat;
+    }
+
+</style>
+</head>
+<body>
+
+    <!-- 第2种实现方式 -->
+    <ul class="rating" id="rating">
+        <li class="rating-item" title="很不好"></li>
+        <li class="rating-item" title="不好"></li>
+        <li class="rating-item" title="一般"></li>
+        <li class="rating-item" title="好"></li>
+        <li class="rating-item" title="很好"></li>
+    </ul>
+
+
+    <ul class="rating" id="rating2">
+        <li class="rating-item" title="很不好"></li>
+        <li class="rating-item" title="不好"></li>
+        <li class="rating-item" title="一般"></li>
+        <li class="rating-item" title="好"></li>
+        <li class="rating-item" title="很好"></li>
+    </ul>
+
+
+
+    <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script type="text/javascript">
+       var rating =  (function() {
+
+                //构造函数 点亮整颗星星
+                function LightEntire(el, options) {
+                    this.$el = $(el),
+                    this.$item = this.$el.find('.rating-item');
+                    this.opts = options;
+                }
+                //初始化方法
+                LightEntire.prototype.init = function () {
+                    this.lightOn(this.opts.num)
+                    //不为只读绑定事件
+                    if (!this.opts.readOnly) {
+                        this.bindEvent();
+                    }
+                }
+                //点亮星星方法
+                LightEntire.prototype.lightOn = function (num) {
+                    var num = parseInt(num);
+                     //获取星星
+                     this.$item.each(function(index) {
+                        if (index < num) {
+                            $(this).css('background-position','0 -32px');
+                        }else{
+                            $(this).css('background-position','0 0');
+                        }
+                    });
+                 }
+              //绑定事件 事件委托
+              LightEntire.prototype.bindEvent = function () {
+                var self = this;
+                var itemLength = self.$item.length;
+                //鼠标划过子元素
+                self.$el.on('mouseover','.rating-item' ,function(event) {
+                 var num =  $(this).index()+1;
+                 self.lightOn(num);
+                   //传递当前选中第几个 和总共个数
+                   (typeof self.opts.select === 'function' )  && self.opts.select.call(this,num, itemLength);
+                   //触发事件传递参数
+                   self.$el.trigger('select',[num, itemLength]);
+               }).on('click','.rating-item', function(event) {
+                 self.opts.num = $(this).index()+1;
+                 (typeof self.opts.chosen === 'function' )  && self.opts.chosen.call(this,self.opts.num, itemLength);
+                  //触发事件传递参数
+                  self.$el.trigger('chosen',[self.opts.num, itemLength]);
+              }).on('mouseout',function(event) {
+                self.lightOn(self.opts.num);
+            });
+
+          }
+
+                //构造函数 点亮半颗星星
+                function LightHalf(el, options) {
+                    this.$el = $(el),
+                    this.$item = this.$el.find('.rating-item');
+                    this.opts = options;
+                    this.add = 1;
+                }
+                //初始化方法
+                LightHalf.prototype.init = function () {
+                    this.lightOn(this.opts.num)
+                    //不为只读绑定事件
+                    if (!this.opts.readOnly) {
+                        this.bindEvent();
+                    }
+                }
+                //点亮星星方法
+                LightHalf.prototype.lightOn = function (num) {
+                    var count = parseInt(num),
+                    isHalf = count !== num;
+                     //获取星星
+                     this.$item.each(function(index) {
+                        if (index < num) {
+                            $(this).css('background-position','0 -32px');
+                        }else{
+                            $(this).css('background-position','0 0');
+                        }
+                    });
+                     if (isHalf) {
+                        this.$item.eq(count).css('background-position','0 -64px');
+                    }
+                }
+              //绑定事件 事件委托
+              LightHalf.prototype.bindEvent = function () {
+                var self = this;
+                var itemLength = self.$item.length;
+                //鼠标划过子元素
+                self.$el.on('mousemove','.rating-item' ,function(event) {
+                    var $this = $(this),
+                    num = 0;
+                    //半颗
+                    if (event.pageX - $this.offset().left < $this.width()/2) {
+                         self.add = 0.5;
+                     }else{
+                        self.add = 1;
+                    }
+                var num =  $(this).index()+self.add;
+                self.lightOn(num);
+                   //传递当前选中第几个 和总共个数
+                   (typeof self.opts.select === 'function' )  && self.opts.select.call(this,num, itemLength);
+                   //触发事件传递参数
+                   self.$el.trigger('select',[num, itemLength]);
+               }).on('click','.rating-item', function(event) {
+                   // self.opts.num = $(this).index()+1;
+                   self.opts.num = $(this).index()+self.add;
+                   (typeof self.opts.chosen === 'function' )  && self.opts.chosen.call(this,self.opts.num, itemLength);
+                  //触发事件传递参数
+                  self.$el.trigger('chosen',[self.opts.num, itemLength]);
+              }).on('mouseout',function(event) {
+                self.lightOn(self.opts.num);
+            });
+
+          }
+
+                //默认参数
+                var defaults  = {
+                    num : 0, //星星点亮默认为0
+                    mode : 'LightEntire', //点亮模式 默认为整颗
+                    readOnly : false, //是否可点击
+                    select : function () {}, //鼠标划过元素执行方法
+                    chosen : function () {}, //点击元素执行方法
+                }
+
+                var mode = {
+                    'LightEntire' : LightEntire,
+                    'LightHalf' : LightHalf,
+                }
+
+                var init = function (el, options) {
+                    //参数重写 如果有传入使用传入 没有使用默认
+                    options = $.extend({}, defaults, options);
+                    // new LightEntire(el,options).init();//实例化
+                    // new LightHalf(el,options).init();//实例化
+                    if (!mode[options.mode]) {
+                        options.mode = 'LightEntire'
+                    }
+                    new mode[options.mode](el,options).init();//实例化
+                }
+
+                return {
+                    init :init
+                }
+
+            })();
+
+            rating.init('#rating',{
+                num : 2.5,
+                // readOnly : true,
+                 mode : 'LightHalf',
+                // select : function(num ,itemLength) {
+                //     console.log(this);
+                //     console.log(num,itemLength)
+
+                // }
+            });
+        // rating.init('#rating2',0);
+        $('#rating').on('select',function(e,num,itemLength) {
+           console.log(num,itemLength)
+           }).on('chosen', function(e,num,itemLength) {
+               console.log(num,itemLength)
+           });
+
+   </script>
+</body>
+</html>

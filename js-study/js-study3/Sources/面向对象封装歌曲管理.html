@@ -1,0 +1,543 @@
+<!DOCTYPE HTML>
+<html lang="en" >
+
+    <head>
+
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>函数的四种调用模式 | JavaScript高级讲义</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 2.6.7">
+
+
+        <meta name="HandheldFriendly" content="true"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+        <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+
+        <link rel="stylesheet" href="../gitbook/plugins/gitbook-plugin-highlight/website.css">
+
+
+
+        <link rel="stylesheet" href="../gitbook/plugins/gitbook-plugin-search/search.css">
+
+
+
+        <link rel="stylesheet" href="../gitbook/plugins/gitbook-plugin-fontsettings/website.css">
+
+
+
+
+
+
+
+
+    <link rel="prev" href="../Sources/闭包.html" />
+
+
+
+    </head>
+    <body>
+
+
+    <div class="book"
+        data-level="1.4"
+        data-chapter-title="函数的四种调用模式"
+        data-filepath="Sources/函数的四种调用模式.md"
+        data-basepath=".."
+        data-revision="Mon Oct 24 2016 01:31:56 GMT+0800 (CST)"
+        data-innerlanguage="">
+
+
+<div class="book-summary">
+    <nav role="navigation">
+        <ul class="summary">
+
+
+
+
+
+
+
+
+
+        <li class="chapter " data-level="0" data-path="index.html">
+
+
+                    <a href="../index.html">
+
+                        <i class="fa fa-check"></i>
+
+                        Introduction
+                    </a>
+
+
+        </li>
+
+        <li class="chapter " data-level="1" >
+
+            <span><b>1.</b> JavaScript高级知识</span>
+
+
+            <ul class="articles">
+
+
+        <li class="chapter " data-level="1.1" data-path="Sources/递归.html">
+
+
+                    <a href="../Sources/递归.html">
+
+                        <i class="fa fa-check"></i>
+
+                            <b>1.1.</b>
+
+                        递归
+                    </a>
+
+
+        </li>
+
+        <li class="chapter " data-level="1.2" >
+
+            <span><b>1.2.</b> 词法作用域</span>
+
+
+            <ul class="articles">
+
+
+        <li class="chapter " data-level="1.2.1" data-path="Sources/词法作用域.html">
+
+
+                    <a href="../Sources/词法作用域.html">
+
+                        <i class="fa fa-check"></i>
+
+                            <b>1.2.1.</b>
+
+                        词法作用域
+                    </a>
+
+
+        </li>
+
+        <li class="chapter " data-level="1.2.2" data-path="Sources/变量名提升.html">
+
+
+                    <a href="../Sources/变量名提升.html">
+
+                        <i class="fa fa-check"></i>
+
+                            <b>1.2.2.</b>
+
+                        变量名提升
+                    </a>
+
+
+        </li>
+
+        <li class="chapter " data-level="1.2.3" data-path="Sources/作用域链.html">
+
+
+                    <a href="../Sources/作用域链.html">
+
+                        <i class="fa fa-check"></i>
+
+                            <b>1.2.3.</b>
+
+                        作用域链
+                    </a>
+
+
+        </li>
+
+
+            </ul>
+
+        </li>
+
+        <li class="chapter " data-level="1.3" data-path="Sources/闭包.html">
+
+
+                    <a href="../Sources/闭包.html">
+
+                        <i class="fa fa-check"></i>
+
+                            <b>1.3.</b>
+
+                        闭包
+                    </a>
+
+
+        </li>
+
+        <li class="chapter active" data-level="1.4" data-path="Sources/函数的四种调用模式.html">
+
+
+                    <a href="../Sources/函数的四种调用模式.html">
+
+                        <i class="fa fa-check"></i>
+
+                            <b>1.4.</b>
+
+                        函数的四种调用模式
+                    </a>
+
+
+        </li>
+
+
+                    <ul class="articles">
+
+
+                        <li class="chapter " data-level="2.1" data-path="Sources/面向对象封装歌曲管理.html">
+                            <a href="../Sources/面向对象封装歌曲管理.html">
+                                <i class="fa fa-check"></i>
+                                <b>2.1.</b> 歌曲列表管理
+                            </a>
+
+                        </li>
+
+                        <li class="chapter " data-level="2.2" data-path="Sources/函数的四种调用模式.html">
+                          <a href="../Sources/函数的四种调用模式.html">
+                            <i class="fa fa-check"></i>
+                            <b>2.2.</b> Tab栏切换
+                        </a>
+
+                    </li>
+
+
+                </ul>
+
+        </li>
+
+
+
+
+            <li class="divider"></li>
+            <li>
+                <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+                    Published with GitBook
+                </a>
+            </li>
+
+        </ul>
+    </nav>
+</div>
+
+    <div class="book-body">
+        <div class="body-inner">
+            <div class="book-header" role="navigation">
+    <!-- Actions Left -->
+
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="../" >JavaScript高级讲义</a>
+    </h1>
+</div>
+
+            <div class="page-wrapper" tabindex="-1" role="main">
+                <div class="page-inner">
+
+
+                    <section class="normal" id="section-">
+               <h2>封装前</h2>
+                <pre>
+
+                        var songList = [
+                            {
+                                songName:"情书",
+                                singer:"张学友"
+                            },
+                            {
+                                songName:"演员",
+                                singer:"薛小谦"
+                            },
+                            {
+                                songName:"李白",
+                                singer:"李荣浩"
+                            }
+
+                        ];
+                       增删该查
+                       songList.push({
+                           songName:"今天你要嫁给我",
+                           singer:"陶喆"
+                       });
+
+                       console.log(songList);
+
+                       删
+                       for (var i = 0; i < songList.length; i++) {
+                           var song = songList[i];
+                           if(song.songName == "李白"){
+                               splice(起始索引,删几个)
+                               songList.splice(i, 1);
+                           }
+                       }
+                        console.log(songList);
+
+                        改
+                        遍历歌曲列表，找到要修改的对象
+                       for (var j = 0; j < songList.length; j++) {
+                           var song = songList[j];
+                           判断每次遍历的对象的歌名，和要找的歌名是不是一一致，如果一致，就是我们要找的对象
+                           if(song.songName == "演员"){
+                               对找到的对象进行修改
+                               song.singer = "薛之谦";
+                           }
+                       }
+                       console.log(songList);
+
+                       查
+                        for (var k = 0; k < songList.length; k++) {
+                            var song = songList[k];
+                            if(song.songName == "情书"){
+                                console.log(song);
+                            }
+                        }
+
+                       console.log(songList);
+                </pre>
+                <h2>函数版</h2>
+                <pre>
+             var songList = [
+            {
+                songName:"情书",
+                singer:"张学友"
+            },
+            {
+                songName:"演员",
+                singer:"薛小谦"
+            },
+            {
+                songName:"李白",
+                singer:"李荣浩"
+            }
+
+        ];
+        //增删该查
+
+                    //增
+            //        function addSong(song){
+            //            songList.push(song);
+            //        }
+            //
+            //        addSong({
+            //            songName:"take me to your heart",
+            //            singer:"迈克学摇滚"
+            //        });
+            //
+            //        console.log(songList);
+
+                   //删
+                    function removeSong(songName){
+                        var song = selectSong(songName);
+                        var index = songList.indexOf(song);
+                        songList.splice(index, 1);
+            //            for (var i = 0; i < songList.length; i++) {
+            //                var song = songList[i];
+            //                if(song.songName == songName){
+            //                    //splice(起始索引,删几个)
+            //                    songList.splice(i, 1);
+            //                }
+            //            }
+                    }
+
+                    removeSong("李白");
+            //
+            //        console.log(songList);
+            //
+                    //改
+                    function updateSong(songName, singer) {
+
+                        var song = selectSong(songName);
+                        song.singer = singer;
+                        //遍历歌曲列表，找到要修改的对象
+            //            for (var j = 0; j < songList.length; j++) {
+            //                var song = songList[j];
+            //                //判断每次遍历的对象的歌名，和要找的歌名是不是一一致，如果一致，就是我们要找的对象
+            //                if(song.songName == songName){
+            //                    //对找到的对象进行修改
+            //                    song.singer = singer;
+            //                }
+            //            }
+                    }
+            //
+            //        updateSong("演员","薛之谦");
+            //        console.log(songList);
+            //
+                    //查
+                    function selectSong(songName) {
+                        for (var k = 0; k < songList.length; k++) {
+                            var song = songList[k];
+                            if(song.songName == songName){
+                                return song;
+                            }
+                        }
+                        return null;
+                    }
+
+                    var obj = selectSong("情书1");
+                    console.log(obj);
+                    //
+                    //        console.log(songList);
+                </pre>
+
+              <h2>面向对象版</h2>
+              <pre>
+                    //        var songList = [
+                    //            {
+                    //                songName:"情书",
+                    //                singer:"张学友"
+                    //            },
+                    //            {
+                    //                songName:"演员",
+                    //                singer:"薛小谦"
+                    //            },
+                    //            {
+                    //                songName:"李白",
+                    //                singer:"李荣浩"
+                    //            }
+                    //
+                    //        ];
+
+                            function SongManager(){
+                                this.songList = null;
+                            }
+
+                            //在当前对象的方法中，调用当前对象的其他方法，需要使用this
+                            //例如 在 removeSong方法中调用 selectSong  this.selectSong
+                            SongManager.prototype = {
+                                init:function (songList) {
+                                    this.songList = songList;
+                                },
+
+                                addSong: function (song){
+                                    this.songList.push(song);
+                                },
+
+                                removeSong:function (songName){
+                                    var song = this.selectSong(songName);
+                                    if(song == null){
+                                        throw "您要删除的歌曲不存在！请重新尝试";
+                                    }
+                                    var index = this.songList.indexOf(song);
+                                    this.songList.splice(index, 1);
+                                },
+
+                                updateSong: function (songName, singer) {
+                                    var song = this.selectSong(songName);
+                                    if(song == null){
+                                        throw "您要修改的歌曲不存在！请重新尝试";
+                                    }
+                                    song.singer = singer;
+                                },
+
+                                selectSong: function (songName) {
+                                    for (var k = 0; k < this.songList.length; k++) {
+                                        var song = this.songList[k];
+                                        if(song.songName == songName){
+                                            return song;
+                                        }
+                                    }
+                                    return null;
+                                }
+                            };
+
+                            var pwbDEManager = new SongManager();
+                            pwbDEManager.init([
+                                {
+                                    songName:"青藏高原",
+                                    singer:"潘文斌"
+                                },
+                                {
+                                    songName:"我的换板鞋，摩擦摩擦最时尚",
+                                    singer:"约翰逊，庞麦郎"
+                                }
+                            ]);
+                            pwbDEManager.addSong({
+                                songName:"东风破",
+                                singer:"Jay Chou"
+                            })
+
+                            var gjbDEManager = new SongManager();
+                            gjbDEManager.init([
+                                {
+                                    songName:"两只老虎",
+                                    singer:"高金彪"
+                                },
+                                {
+                                    songName:"粉刷匠",
+                                    singer:"高金彪"
+                                }
+                            ]);
+                    //        gjbDEManager.removeSong("李白");
+                            gjbDEManager.removeSong("两只老虎");
+                            console.log(pwbDEManager.songList);
+                            console.log(gjbDEManager.songList);
+
+
+                            //要封装一个歌曲管理的工具
+                            //特征：歌曲列表
+                            //行为：增  删  改 查
+
+                            //学生管理系统
+                            //特征：学生列表
+                            //行为：增删改查
+              </pre>
+
+
+
+
+                    </section>
+
+
+                </div>
+            </div>
+        </div>
+
+
+        <a href="../Sources/闭包.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: 闭包"><i class="fa fa-angle-left"></i></a>
+
+
+    </div>
+</div>
+
+
+<script src="../gitbook/app.js"></script>
+
+
+    <script src="../gitbook/plugins/gitbook-plugin-search/lunr.min.js"></script>
+
+
+
+    <script src="../gitbook/plugins/gitbook-plugin-search/search.js"></script>
+
+
+
+    <script src="../gitbook/plugins/gitbook-plugin-sharing/buttons.js"></script>
+
+
+
+    <script src="../gitbook/plugins/gitbook-plugin-fontsettings/buttons.js"></script>
+
+
+<script>
+require(["gitbook"], function(gitbook) {
+    var config = {"highlight":{},"search":{"maxIndexSize":1000000},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2}};
+    gitbook.start(config);
+});
+</script>
+
+
+    </body>
+
+</html>
